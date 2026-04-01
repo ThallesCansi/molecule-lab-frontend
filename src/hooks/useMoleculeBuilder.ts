@@ -9,7 +9,6 @@ import {
   getRemainingValence,
   findBestPosition,
   computeImplicitHydrogens,
-  organizeStructure,
   findAtomAtPosition,
 } from '@/lib/moleculeEngine';
 
