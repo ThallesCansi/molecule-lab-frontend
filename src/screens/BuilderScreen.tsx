@@ -8,7 +8,7 @@ import AtomPalette from '@/components/builder/AtomPalette';
 import PresetsPanel from '@/components/builder/PresetsPanel';
 import { ArrowLeft, Flame } from 'lucide-react';
 
-type Tool = 'add' | 'move' | 'delete';
+type Tool = 'select' | 'add' | 'move' | 'delete';
 type Tab = 'free' | 'presets';
 
 export default function BuilderScreen() {
@@ -24,6 +24,7 @@ export default function BuilderScreen() {
         if (e.shiftKey) builder.redo(); else builder.undo();
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); builder.redo(); }
+      if (e.key === 's') setTool('select');
       if (e.key === 'a') setTool('add');
       if (e.key === 'm') setTool('move');
       if (e.key === 'd') setTool('delete');
@@ -47,8 +48,8 @@ export default function BuilderScreen() {
   }, [builder]);
 
   return (
-    <div className="min-h-screen flex flex-col gradient-bg-subtle">
-      <header className="flex items-center justify-between px-4 md:px-8 py-3 border-b border-border/50">
+    <div className="h-screen flex flex-col gradient-bg-subtle overflow-hidden">
+      <header className="flex items-center justify-between px-4 md:px-8 py-3 border-b border-border/50 shrink-0">
         <Button variant="ghost" size="sm" onClick={() => setScreen('landing')}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
         </Button>
@@ -58,10 +59,10 @@ export default function BuilderScreen() {
         </Button>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <aside className="w-full md:w-60 border-b md:border-b-0 md:border-r border-border/50 p-3 flex flex-col gap-3 overflow-y-auto">
-          {/* Tabs: Livre / Prontas */}
-          <div className="flex gap-1 glass-card p-1 rounded-xl">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        <aside className="w-full md:w-60 border-b md:border-b-0 md:border-r border-border/50 p-3 flex flex-col gap-3 overflow-hidden shrink-0">
+          {/* Tabs */}
+          <div className="flex gap-1 glass-card p-1 rounded-xl shrink-0">
             {([['free', 'Livre'], ['presets', 'Prontas']] as const).map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`flex-1 text-xs py-2 rounded-lg transition-all font-medium ${
@@ -74,44 +75,47 @@ export default function BuilderScreen() {
           </div>
 
           {tab === 'free' && (
-            <>
+            <div className="flex flex-col gap-3 overflow-hidden min-h-0">
               <AtomPalette selectedAtomType={builder.selectedAtomType} onSelect={handleSelectAtom} />
-              <div className="glass-card p-3 rounded-xl text-xs text-muted-foreground mt-auto">
+              <div className="glass-card p-3 rounded-xl text-xs text-muted-foreground shrink-0">
                 <p className="font-medium text-foreground mb-1">💡 Dicas</p>
                 <ul className="space-y-1">
                   <li>• Escolha um átomo e clique no canvas</li>
                   <li>• Pontos tracejados = posições sugeridas</li>
                   <li>• Clique num átomo para selecioná-lo</li>
-                  <li>• Use "Organizar" para arrumar a estrutura</li>
                 </ul>
               </div>
-            </>
+            </div>
           )}
 
-          {tab === 'presets' && <PresetsPanel onLoad={builder.loadPreset} />}
+          {tab === 'presets' && (
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <PresetsPanel onLoad={builder.loadPreset} />
+            </div>
+          )}
         </aside>
 
-        <main className="flex-1 relative p-3 flex gap-2">
-          <div className="z-10">
+        <main className="flex-1 relative p-3 flex gap-2 overflow-hidden min-h-0">
+          <div className="z-10 shrink-0">
             <BuilderToolbar
               tool={tool} setTool={setTool}
               canUndo={builder.canUndo} canRedo={builder.canRedo}
               onUndo={builder.undo} onRedo={builder.redo}
               onClear={builder.clearAll} onComplete={builder.completeWithHydrogens}
-              onOrganize={builder.organize}
               showHydrogens={builder.showHydrogens} onToggleH={() => builder.setShowHydrogens(!builder.showHydrogens)}
               hasAtoms={builder.atoms.length > 0}
               bondOrder={builder.bondOrder} setBondOrder={builder.setBondOrder}
             />
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 min-h-0">
             <BuilderCanvas
               atoms={builder.atoms} bonds={builder.bonds}
               activeAtomId={builder.activeAtomId} selectedAtomType={builder.selectedAtomType}
               showHydrogens={builder.showHydrogens} implicitH={builder.implicitH}
               tool={tool}
               onCanvasClick={builder.addAtom} onAtomClick={builder.clickAtom}
+              onAtomSelect={builder.setActiveAtomId}
               onAtomDelete={builder.deleteAtom} onBondClick={builder.deleteBond}
               onAtomMove={builder.moveAtom} onMoveEnd={builder.finishMove}
               getGhostPosition={builder.getGhostPosition} findAtomAt={builder.findAtomAt}

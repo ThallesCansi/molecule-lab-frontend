@@ -226,7 +226,6 @@ export function useMoleculeBuilder() {
     finishMove,
     clearAll,
     completeWithHydrogens,
-    organize,
     loadPreset,
     undo,
     redo,

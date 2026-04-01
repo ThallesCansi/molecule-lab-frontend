@@ -6,14 +6,13 @@ import {
   MousePointer,
   Hand,
   Atom,
-  LayoutGrid,
   EyeOff,
   Eye,
+  Plus,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-type Tool = 'add' | 'move' | 'delete';
+type Tool = 'select' | 'add' | 'move' | 'delete';
 
 interface BuilderToolbarProps {
   tool: Tool;
@@ -24,7 +23,6 @@ interface BuilderToolbarProps {
   onRedo: () => void;
   onClear: () => void;
   onComplete: () => void;
-  onOrganize: () => void;
   showHydrogens: boolean;
   onToggleH: () => void;
   hasAtoms: boolean;
@@ -74,7 +72,6 @@ export default function BuilderToolbar({
   onRedo,
   onClear,
   onComplete,
-  onOrganize,
   showHydrogens,
   onToggleH,
   hasAtoms,
@@ -83,7 +80,8 @@ export default function BuilderToolbar({
 }: BuilderToolbarProps) {
   return (
     <div className="flex flex-col gap-1.5 p-2 glass-card rounded-2xl">
-      <ToolBtn icon={MousePointer} label="Adicionar (A)" active={tool === 'add'} onClick={() => setTool('add')} />
+      <ToolBtn icon={MousePointer} label="Selecionar (S)" active={tool === 'select'} onClick={() => setTool('select')} />
+      <ToolBtn icon={Plus} label="Adicionar (A)" active={tool === 'add'} onClick={() => setTool('add')} />
       <ToolBtn icon={Hand} label="Mover (M)" active={tool === 'move'} onClick={() => setTool('move')} />
       <ToolBtn icon={Trash2} label="Apagar (D)" active={tool === 'delete'} onClick={() => setTool('delete')} />
 
@@ -119,7 +117,6 @@ export default function BuilderToolbar({
         onClick={onToggleH}
       />
       <ToolBtn icon={Atom} label="Completar H" onClick={onComplete} disabled={!hasAtoms} />
-      <ToolBtn icon={LayoutGrid} label="Organizar" onClick={onOrganize} disabled={!hasAtoms} />
 
       <div className="border-t border-border/30 my-1" />
 
