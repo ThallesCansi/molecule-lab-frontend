@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Atom } from '@/context/ExperienceContext';
-import { BondWithOrder, ATOM_COLORS, getRemainingValence } from '@/lib/moleculeEngine';
+import { BondWithOrder, getRemainingValence } from '@/lib/moleculeEngine';
+import { ATOM_COLORS } from '@/data/presetMolecules';
 
 interface BuilderCanvasProps {
   atoms: Atom[];

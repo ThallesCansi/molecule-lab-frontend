@@ -1,5 +1,6 @@
 import React from 'react';
-import { ATOM_COLORS, VALENCE } from '@/lib/moleculeEngine';
+import { ATOM_COLORS } from '@/data/presetMolecules';
+import { VALENCE } from '@/lib/moleculeEngine';
 
 const AVAILABLE_ATOMS = [
   { symbol: 'C', name: 'Carbono', valence: 4 },
