@@ -9,7 +9,6 @@ import {
   getRemainingValence,
   findBestPosition,
   computeImplicitHydrogens,
-  organizeStructure,
   findAtomAtPosition,
 } from '@/lib/moleculeEngine';
 
@@ -188,13 +187,6 @@ export function useMoleculeBuilder() {
     pushHistory(newAtoms, newBonds);
   }, [atoms, bonds, pushHistory]);
 
-  // Organize
-  const organize = useCallback(() => {
-    const organized = organizeStructure(atoms, bonds);
-    setAtoms(organized);
-    pushHistory(organized, bonds);
-  }, [atoms, bonds, pushHistory]);
-
   // Load preset
   const loadPreset = useCallback((presetAtoms: Atom[], presetBonds: BondWithOrder[]) => {
     setAtoms(presetAtoms);
@@ -234,7 +226,6 @@ export function useMoleculeBuilder() {
     finishMove,
     clearAll,
     completeWithHydrogens,
-    organize,
     loadPreset,
     undo,
     redo,

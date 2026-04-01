@@ -3,6 +3,8 @@ import { Atom } from '@/context/ExperienceContext';
 import { BondWithOrder, getRemainingValence, getCandidatePositions, BOND_LENGTH } from '@/lib/moleculeEngine';
 import { ATOM_COLORS } from '@/data/presetMolecules';
 
+type Tool = 'select' | 'add' | 'move' | 'delete';
+
 interface BuilderCanvasProps {
   atoms: Atom[];
   bonds: BondWithOrder[];
@@ -10,9 +12,10 @@ interface BuilderCanvasProps {
   selectedAtomType: string;
   showHydrogens: boolean;
   implicitH: { hydrogenAtoms: Atom[]; hydrogenBonds: BondWithOrder[] };
-  tool: 'add' | 'move' | 'delete';
+  tool: Tool;
   onCanvasClick: (x: number, y: number) => void;
   onAtomClick: (atomId: string) => void;
+  onAtomSelect: (atomId: string | null) => void;
   onAtomDelete: (atomId: string) => void;
   onBondClick: (bondId: string) => void;
   onAtomMove: (atomId: string, x: number, y: number) => void;
@@ -23,7 +26,7 @@ interface BuilderCanvasProps {
 
 export default function BuilderCanvas({
   atoms, bonds, activeAtomId, selectedAtomType, showHydrogens, implicitH,
-  tool, onCanvasClick, onAtomClick, onAtomDelete, onBondClick, onAtomMove, onMoveEnd,
+  tool, onCanvasClick, onAtomClick, onAtomSelect, onAtomDelete, onBondClick, onAtomMove, onMoveEnd,
   getGhostPosition, findAtomAt,
 }: BuilderCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -40,7 +43,16 @@ export default function BuilderCanvas({
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (dragging) return;
     const pos = getMousePos(e);
-    if (tool === 'add') {
+
+    if (tool === 'select') {
+      const existing = findAtomAt(pos);
+      if (existing) {
+        // Toggle selection
+        onAtomSelect(existing.id === activeAtomId ? null : existing.id);
+      } else {
+        onAtomSelect(null);
+      }
+    } else if (tool === 'add') {
       const existing = findAtomAt(pos);
       if (existing) {
         onAtomClick(existing.id);
@@ -52,9 +64,15 @@ export default function BuilderCanvas({
 
   const handleAtomMouseDown = (atomId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (tool === 'move') setDragging(atomId);
-    else if (tool === 'delete') onAtomDelete(atomId);
-    else if (tool === 'add') onAtomClick(atomId);
+    if (tool === 'move') {
+      setDragging(atomId);
+    } else if (tool === 'delete') {
+      onAtomDelete(atomId);
+    } else if (tool === 'add') {
+      onAtomClick(atomId);
+    } else if (tool === 'select') {
+      onAtomSelect(atomId === activeAtomId ? null : atomId);
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -70,12 +88,10 @@ export default function BuilderCanvas({
   const activeAtom = activeAtomId ? atoms.find(a => a.id === activeAtomId) : null;
   const ghostOverAtom = mousePos ? findAtomAt(mousePos) : null;
 
-  // Ghost position snapped to best candidate
   const ghostPos = (tool === 'add' && mousePos && activeAtom && !ghostOverAtom)
     ? getGhostPosition(mousePos)
     : null;
 
-  // Candidate positions for visual hints (only when active atom selected)
   const candidateHints = useMemo(() => {
     if (tool !== 'add' || !activeAtom) return [];
     const remaining = getRemainingValence(activeAtomId!, atoms, bonds);
@@ -85,6 +101,8 @@ export default function BuilderCanvas({
 
   const displayAtoms = showHydrogens ? [...atoms, ...implicitH.hydrogenAtoms] : atoms;
   const displayBonds = showHydrogens ? [...bonds, ...implicitH.hydrogenBonds] : bonds;
+
+  const cursorStyle = tool === 'add' ? 'crosshair' : tool === 'move' ? (dragging ? 'grabbing' : 'grab') : tool === 'select' ? 'default' : 'default';
 
   const renderBond = (bond: BondWithOrder, isImplicit = false) => {
     const from = displayAtoms.find(a => a.id === bond.from);
@@ -104,7 +122,7 @@ export default function BuilderCanvas({
         <line key={bond.id}
           x1={from.x} y1={from.y} x2={to.x} y2={to.y}
           stroke={strokeColor} strokeWidth={isImplicit ? 1.5 : 3} strokeLinecap="round" opacity={opacity}
-          className="cursor-pointer"
+          className={tool === 'delete' ? 'cursor-pointer hover:opacity-100' : ''}
           onClick={(e) => { e.stopPropagation(); if (tool === 'delete') onBondClick(bond.id); }}
         />
       );
@@ -119,7 +137,7 @@ export default function BuilderCanvas({
             x1={from.x + perpX * off} y1={from.y + perpY * off}
             x2={to.x + perpX * off} y2={to.y + perpY * off}
             stroke={strokeColor} strokeWidth={isImplicit ? 1.5 : 2.5} strokeLinecap="round" opacity={opacity}
-            className="cursor-pointer"
+            className={tool === 'delete' ? 'cursor-pointer hover:opacity-100' : ''}
             onClick={(e) => { e.stopPropagation(); if (tool === 'delete') onBondClick(bond.id); }}
           />
         ))}
@@ -137,12 +155,12 @@ export default function BuilderCanvas({
     return (
       <g key={atom.id}
         onMouseDown={(e) => !isImplicit && handleAtomMouseDown(atom.id, e)}
-        style={{ cursor: tool === 'move' ? 'grab' : 'pointer', opacity }}
+        style={{ cursor: tool === 'move' ? (dragging === atom.id ? 'grabbing' : 'grab') : tool === 'delete' ? 'pointer' : 'pointer', opacity }}
       >
         {/* Active ring */}
         {isActive && !isImplicit && (
           <circle cx={atom.x} cy={atom.y} r={radius + 12}
-            fill="none" stroke="hsl(var(--primary))" strokeWidth="2" strokeDasharray="4 3" opacity="0.6"
+            fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeDasharray="4 3" opacity="0.7"
           >
             <animateTransform attributeName="transform" type="rotate"
               from={`0 ${atom.x} ${atom.y}`} to={`360 ${atom.x} ${atom.y}`} dur="4s" repeatCount="indefinite"
@@ -152,14 +170,14 @@ export default function BuilderCanvas({
 
         {/* Glow */}
         <circle cx={atom.x} cy={atom.y} r={radius + 5}
-          fill={atom.color} opacity={isActive ? 0.2 : 0.08}
+          fill={atom.color} opacity={isActive ? 0.25 : 0.08}
         />
 
         {/* Main */}
         <circle cx={atom.x} cy={atom.y} r={radius}
           fill={atom.color}
           stroke={isActive ? 'hsl(var(--primary))' : 'rgba(255,255,255,0.12)'}
-          strokeWidth={isActive ? 2.5 : 1}
+          strokeWidth={isActive ? 3 : 1}
         />
 
         {/* Valence dots */}
@@ -192,7 +210,7 @@ export default function BuilderCanvas({
   return (
     <svg ref={svgRef}
       className="w-full h-full min-h-[400px] rounded-2xl border border-border/30 bg-background/30 backdrop-blur-sm"
-      style={{ cursor: tool === 'add' ? 'crosshair' : tool === 'move' ? 'grab' : 'default' }}
+      style={{ cursor: cursorStyle }}
       onClick={handleCanvasClick} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}
     >
       {/* Grid */}
