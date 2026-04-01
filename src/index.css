@@ -2,95 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 270 20% 4%;
+    --foreground: 270 10% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 270 20% 8%;
+    --card-foreground: 270 10% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 270 20% 8%;
+    --popover-foreground: 270 10% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 280 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 300 50% 20%;
+    --secondary-foreground: 270 10% 95%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 270 15% 15%;
+    --muted-foreground: 270 10% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 320 70% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 270 20% 18%;
+    --input: 270 20% 18%;
+    --ring: 280 70% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --glow-primary: 280 80% 60%;
+    --glow-accent: 320 80% 60%;
+    --glow-warm: 340 80% 55%;
+    --surface-glass: 270 20% 10%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 270 20% 6%;
+    --sidebar-foreground: 270 10% 95%;
+    --sidebar-primary: 280 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 270 15% 15%;
+    --sidebar-accent-foreground: 270 10% 95%;
+    --sidebar-border: 270 20% 18%;
+    --sidebar-ring: 280 70% 55%;
   }
 }
 
@@ -100,6 +58,91 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl;
+  }
+
+  .glow-border {
+    @apply border border-primary/30;
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15), inset 0 0 20px hsl(var(--primary) / 0.05);
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[hsl(280,70%,65%)] via-[hsl(320,70%,60%)] to-[hsl(340,80%,60%)];
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-br from-[hsl(280,70%,55%)] via-[hsl(300,60%,50%)] to-[hsl(330,70%,55%)];
+  }
+
+  .gradient-bg-subtle {
+    @apply bg-gradient-to-br from-[hsl(280,50%,12%)] via-[hsl(270,20%,6%)] to-[hsl(320,40%,10%)];
+  }
+
+  .atom-shadow {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.1);
+  }
+
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+  50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.6), 0 0 80px hsl(var(--accent) / 0.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes moleculeVibrate {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-2px, -1px) rotate(-1deg); }
+  20% { transform: translate(2px, 1px) rotate(1deg); }
+  30% { transform: translate(-1px, 2px) rotate(-0.5deg); }
+  40% { transform: translate(1px, -2px) rotate(0.5deg); }
+  50% { transform: translate(-2px, 2px) rotate(-1deg); }
+  60% { transform: translate(2px, -1px) rotate(1deg); }
+  70% { transform: translate(-1px, -2px) rotate(-0.5deg); }
+  80% { transform: translate(1px, 2px) rotate(0.5deg); }
+  90% { transform: translate(-2px, -1px) rotate(-1deg); }
+}
+
+@keyframes intensifyVibrate {
+  0% { transform: translate(0, 0) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: translate(-4px, -3px) rotate(-2deg); filter: hue-rotate(10deg); }
+  50% { transform: translate(4px, 3px) rotate(2deg); filter: hue-rotate(20deg); }
+  75% { transform: translate(-3px, 4px) rotate(-1deg); filter: hue-rotate(10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); filter: hue-rotate(0deg); }
+}
+
+@keyframes breakApart {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.5) rotate(45deg); }
+}
+
+@keyframes particleBurst {
+  0% { opacity: 1; transform: scale(0); }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+@keyframes heatWave {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

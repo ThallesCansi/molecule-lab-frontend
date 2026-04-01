@@ -1,16 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { ExperienceProvider, useExperience } from '@/context/ExperienceContext';
+import AdminPanel from '@/components/AdminPanel';
+import LandingScreen from '@/screens/LandingScreen';
+import BuilderScreen from '@/screens/BuilderScreen';
+import SimulationScreen from '@/screens/SimulationScreen';
+import ExplanationScreen from '@/screens/ExplanationScreen';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+function ExperienceRouter() {
+  const { screen } = useExperience();
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <>
+      {screen === 'landing' && <LandingScreen />}
+      {screen === 'builder' && <BuilderScreen />}
+      {screen === 'simulation' && <SimulationScreen />}
+      {screen === 'explanation' && <ExplanationScreen />}
+      <AdminPanel />
+    </>
   );
-};
+}
 
-const Index = PlaceholderIndex;
+const Index = () => (
+  <ExperienceProvider>
+    <ExperienceRouter />
+  </ExperienceProvider>
+);
 
 export default Index;
