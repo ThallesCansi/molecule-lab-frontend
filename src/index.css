@@ -1,148 +1,502 @@
+@import url('https://fonts.googleapis.com/css2?family=Chilanka&family=Shadows+Into+Light&family=Amatic+SC&family=Patrick+Hand&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @layer base {
   :root {
-    --background: 270 20% 4%;
-    --foreground: 270 10% 95%;
+    /* 📄 Cores de papel e materiais de desenho */
+    --background: 45, 30%, 98%;        /* Papel creme suave */
+    --foreground: 220, 15%, 20%;       /* Grafite escuro */
 
-    --card: 270 20% 8%;
-    --card-foreground: 270 10% 95%;
+    --card: 45, 25%, 96%;              /* Papel levemente texturizado */
+    --card-foreground: 220, 15%, 25%;
 
-    --popover: 270 20% 8%;
-    --popover-foreground: 270 10% 95%;
+    --popover: 50, 30%, 97%;
+    --popover-foreground: 220, 15%, 25%;
 
-    --primary: 280 70% 55%;
-    --primary-foreground: 0 0% 100%;
+    /* 🖍️ Cores de lápis de cor vibrantes */
+    --primary: 25, 90%, 60%;           /* Laranja crayon */
+    --primary-foreground: 45, 30%, 98%;
 
-    --secondary: 300 50% 20%;
-    --secondary-foreground: 270 10% 95%;
+    --secondary: 200, 75%, 55%;        /* Azul céu */
+    --secondary-foreground: 45, 30%, 98%;
 
-    --muted: 270 15% 15%;
-    --muted-foreground: 270 10% 60%;
+    --muted: 45, 10%, 85%;             /* Cinza lápis suave */
+    --muted-foreground: 220, 10%, 45%;
 
-    --accent: 320 70% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 340, 85%, 65%;           /* Rosa chiclete */
+    --accent-foreground: 45, 30%, 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 10, 90%, 55%;       /* Vermelho marcador */
+    --destructive-foreground: 45, 30%, 98%;
 
-    --border: 270 20% 18%;
-    --input: 270 20% 18%;
-    --ring: 280 70% 55%;
+    --border: 220, 10%, 60%;           /* Contorno de lápis */
+    --input: 45, 20%, 94%;
+    --ring: 25, 90%, 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;                    /* Bordas mais arredondadas e orgânicas */
 
-    --glow-primary: 280 80% 60%;
-    --glow-accent: 320 80% 60%;
-    --glow-warm: 340 80% 55%;
-    --surface-glass: 270 20% 10%;
+    /* ✨ Efeitos de brilho suave como giz de cera */
+    --glow-primary: 25, 90%, 65%;
+    --glow-accent: 340, 85%, 70%;
+    --glow-warm: 45, 80%, 75%;
+    --surface-glass: 45, 20%, 92%;
 
-    --sidebar-background: 270 20% 6%;
-    --sidebar-foreground: 270 10% 95%;
-    --sidebar-primary: 280 70% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 15% 15%;
-    --sidebar-accent-foreground: 270 10% 95%;
-    --sidebar-border: 270 20% 18%;
-    --sidebar-ring: 280 70% 55%;
+    /* 📒 Cores para sidebar estilo caderno */
+    --sidebar-background: 45, 25%, 94%;
+    --sidebar-foreground: 220, 15%, 25%;
+    --sidebar-primary: 25, 90%, 60%;
+    --sidebar-primary-foreground: 45, 30%, 98%;
+    --sidebar-accent: 45, 20%, 88%;
+    --sidebar-accent-foreground: 220, 15%, 25%;
+    --sidebar-border: 220, 10%, 70%;
+    --sidebar-ring: 25, 90%, 60%;
+
+    /* 🎨 Variáveis para textura de papel */
+    --paper-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    /* Traços levemente irregulares para efeito desenhado */
+    border-style: solid;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Chilanka', 'Patrick Hand', cursive;
+    /* Textura sutil de papel */
+    background-image: var(--paper-noise);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Shadows Into Light', 'Amatic SC', cursive;
+    text-transform: none;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    /* Efeito de traço de marcador */
+    text-shadow: 2px 2px 0 hsl(var(--accent) / 0.15);
+  }
+
+  /* 📝 Inputs com estilo de caderno */
+  input, textarea, select {
+    @apply bg-input border-border rounded-lg;
+    font-family: 'Chilanka', cursive;
+    /* Linhas de caderno sutis */
+    background-image: 
+      linear-gradient(transparent 95%, hsl(var(--border) / 0.1) 95%),
+      linear-gradient(90deg, transparent 95%, hsl(var(--border) / 0.05) 95%);
+    background-size: 100% 2rem, 2rem 100%;
+  }
+
+  input:focus, textarea:focus {
+    @apply ring-2 ring-primary/50 outline-none;
+    /* Efeito de marca-texto ao focar - sombra dura */
+    box-shadow: 0 0 0 3px hsl(var(--background)), 6px 6px 0 0 hsl(var(--primary) / 0.4);
   }
 }
 
 @layer components {
+  /* 🗂️ Cartões estilo folha de caderno - SOMBRAS DURAS */
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl;
+    @apply bg-card backdrop-blur-sm border-2 border-border/60 rounded-3xl relative overflow-hidden;
+    /* Bordas "desenhadas à mão" com leve irregularidade */
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--border) / 0.35),
+      8px 8px 0 0 hsl(var(--foreground) / 0.08);
   }
 
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Textura de fibra de papel */
+    background-image: var(--paper-noise);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* ✏️ Bordas com efeito de giz de cera - SOMBRAS DURAS */
   .glow-border {
-    @apply border border-primary/30;
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.15), inset 0 0 20px hsl(var(--primary) / 0.05);
+    @apply border-2 border-primary/60 rounded-2xl relative;
+    box-shadow: 
+      0 0 0 4px hsl(var(--primary) / 0.15),
+      5px 5px 0 0 hsl(var(--border) / 0.45);
   }
 
+  .glow-border::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    /* Contorno irregular estilo desenho */
+    border: 2px dashed hsl(var(--primary) / 0.3);
+    pointer-events: none;
+    animation: wobble 3s ease-in-out infinite;
+  }
+
+  /* 🌈 Texto com gradiente de marcador */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[hsl(280,70%,65%)] via-[hsl(320,70%,60%)] to-[hsl(340,80%,60%)];
+    @apply bg-clip-text text-transparent font-bold;
+    background-image: linear-gradient(
+      45deg,
+      hsl(25, 90%, 55%) 0%,
+      hsl(340, 85%, 60%) 35%,
+      hsl(200, 75%, 55%) 70%,
+      hsl(140, 70%, 50%) 100%
+    );
+    background-size: 300% 300%;
+    animation: crayonShine 4s ease infinite;
+    /* Sombra suave como traço de giz */
+    text-shadow: 1px 1px 0 hsl(var(--background) / 0.8);
   }
 
+  /* 🎨 Fundo sólido vibrante com sombra dura estilo cartoon */
   .gradient-bg {
-    @apply bg-gradient-to-br from-[hsl(280,70%,55%)] via-[hsl(300,60%,50%)] to-[hsl(330,70%,55%)];
+    @apply rounded-3xl relative overflow-hidden border-2 border-black/10;
+    /* Cores sólidas e vibrantes - escolha a que preferir */
+    background-color: hsl(var(--primary)); /* Laranja crayon vibrante */
+    /* Sombra dura offset - efeito de papel recortado */
+    box-shadow: 
+      10px 10px 0 0 hsl(var(--border) / 0.4),
+      14px 14px 0 0 hsl(var(--foreground) / 0.1);
+    /* Texto sempre legível */
+    color: hsl(var(--primary-foreground));
   }
 
+  /* Variações de cor fáceis de usar */
+  .gradient-bg.pink   { background-color: hsl(var(--accent)); }
+  .gradient-bg.blue   { background-color: hsl(var(--secondary)); }
+  .gradient-bg.yellow { background-color: hsl(50, 95%, 60%); color: hsl(var(--foreground)); }
+  .gradient-bg.green  { background-color: hsl(140, 70%, 55%); color: hsl(var(--foreground)); }
+
+  /* 📒 Fundo claro estilo folha de papel - LIMPO e com contraste */
   .gradient-bg-subtle {
-    @apply bg-gradient-to-br from-[hsl(280,50%,12%)] via-[hsl(270,20%,6%)] to-[hsl(320,40%,10%)];
+    @apply rounded-2xl relative bg-white border-2 border-black/15;
+    /* Branco papel puro, sem ruído */
+    background-color: hsl(var(--background));
+    /* Sombra dura para profundidade */
+    box-shadow: 
+      6px 6px 0 0 hsl(var(--border) / 0.35),
+      10px 10px 0 0 hsl(var(--foreground) / 0.06);
   }
 
+  /* Versão com borda colorida para destaque */
+  .gradient-bg-subtle.highlight {
+    @apply border-primary;
+    box-shadow: 
+      6px 6px 0 0 hsl(var(--primary) / 0.5),
+      10px 10px 0 0 hsl(var(--foreground) / 0.08);
+  }
+
+  /* Versão com cantos "rasgados" opcionais */
+  .gradient-bg-subtle.torn {
+    position: relative;
+  }
+  .gradient-bg-subtle.torn::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 24px;
+    height: 24px;
+    background: 
+      linear-gradient(135deg, transparent 50%, hsl(var(--border)) 50%);
+    border-radius: 0 0 0 4px;
+  }
+
+  /* ✨ Sombra estilo "recorte de papel" - 100% DURA */
   .atom-shadow {
-    box-shadow: 0 0 30px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.1);
+    box-shadow: 
+      6px 6px 0 0 hsl(var(--border) / 0.3),
+      12px 12px 0 0 hsl(var(--primary) / 0.15),
+      18px 18px 0 0 hsl(var(--foreground) / 0.08);
+    transition: transform 0.2s ease;
   }
 
+  .atom-shadow:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 
+      8px 8px 0 0 hsl(var(--border) / 0.4),
+      16px 16px 0 0 hsl(var(--primary) / 0.2),
+      22px 22px 0 0 hsl(var(--foreground) / 0.12);
+  }
+
+  /* 💫 Animação de pulso suave como respiração - SOMBRAS DURAS */
   .pulse-glow {
-    animation: pulseGlow 2s ease-in-out infinite;
+    animation: pulseGlow 2.5s ease-in-out infinite;
+  }
+
+  /* 🎀 Botões estilo adesivo - SOMBRAS DURAS */
+  .sticker-btn {
+    @apply relative px-6 py-3 font-bold rounded-2xl border-2 border-border/50;
+    background: linear-gradient(145deg, hsl(var(--card)), hsl(var(--background)));
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--border) / 0.4),
+      8px 8px 0 0 hsl(var(--foreground) / 0.08);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .sticker-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 
+      6px 6px 0 0 hsl(var(--border) / 0.5),
+      12px 12px 0 0 hsl(var(--foreground) / 0.12);
+  }
+
+  .sticker-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 
+      2px 2px 0 0 hsl(var(--border) / 0.3),
+      4px 4px 0 0 hsl(var(--foreground) / 0.06);
+  }
+
+  /* 🏷️ Elementos estilo etiqueta colada - SOMBRAS DURAS */
+  .paper-tag {
+    @apply relative px-4 py-2 rounded-lg border-2 border-dashed border-border/60;
+    background: hsl(var(--card));
+    box-shadow: 3px 3px 0 0 hsl(var(--border) / 0.35);
+  }
+
+  .paper-tag::before {
+    content: "✦";
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    font-size: 0.8rem;
+    color: hsl(var(--accent));
+    animation: twinkle 2s ease-in-out infinite;
   }
 }
 
+/* 🎬 Animações divertidas e orgânicas */
+
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
-  50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.6), 0 0 80px hsl(var(--accent) / 0.2); }
+  0%, 100% { 
+    box-shadow: 
+      4px 4px 0 0 hsl(var(--border) / 0.25),
+      0 0 0 4px hsl(var(--background)); 
+  }
+  50% { 
+    box-shadow: 
+      6px 6px 0 0 hsl(var(--border) / 0.4),
+      0 0 0 6px hsl(var(--primary) / 0.2); 
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
 }
 
-@keyframes moleculeVibrate {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  10% { transform: translate(-2px, -1px) rotate(-1deg); }
-  20% { transform: translate(2px, 1px) rotate(1deg); }
-  30% { transform: translate(-1px, 2px) rotate(-0.5deg); }
-  40% { transform: translate(1px, -2px) rotate(0.5deg); }
-  50% { transform: translate(-2px, 2px) rotate(-1deg); }
-  60% { transform: translate(2px, -1px) rotate(1deg); }
-  70% { transform: translate(-1px, -2px) rotate(-0.5deg); }
-  80% { transform: translate(1px, 2px) rotate(0.5deg); }
-  90% { transform: translate(-2px, -1px) rotate(-1deg); }
+@keyframes wobble {
+  0%, 100% { border-radius: 60% 40% 55% 45% / 55% 45% 60% 40%; }
+  25% { border-radius: 45% 55% 40% 60% / 40% 60% 45% 55%; }
+  50% { border-radius: 50% 45% 60% 40% / 60% 40% 50% 45%; }
+  75% { border-radius: 40% 60% 45% 55% / 45% 55% 40% 60%; }
 }
 
-@keyframes intensifyVibrate {
-  0% { transform: translate(0, 0) rotate(0deg); filter: hue-rotate(0deg); }
-  25% { transform: translate(-4px, -3px) rotate(-2deg); filter: hue-rotate(10deg); }
-  50% { transform: translate(4px, 3px) rotate(2deg); filter: hue-rotate(20deg); }
-  75% { transform: translate(-3px, 4px) rotate(-1deg); filter: hue-rotate(10deg); }
-  100% { transform: translate(0, 0) rotate(0deg); filter: hue-rotate(0deg); }
-}
-
-@keyframes breakApart {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
-  100% { opacity: 0; transform: scale(1.5) rotate(45deg); }
-}
-
-@keyframes particleBurst {
-  0% { opacity: 1; transform: scale(0); }
-  50% { opacity: 0.8; }
-  100% { opacity: 0; transform: scale(3); }
-}
-
-@keyframes heatWave {
+@keyframes crayonShine {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(10deg); }
+}
+
+@keyframes bounceSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes sketchDraw {
+  0% { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+  100% { stroke-dasharray: 1000; stroke-dashoffset: 0; }
+}
+
+@keyframes paperCrumple {
+  0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+  25% { transform: scale(0.98) rotate(-1deg); filter: brightness(1.05); }
+  50% { transform: scale(1.02) rotate(1deg); filter: brightness(0.95); }
+  75% { transform: scale(0.99) rotate(-0.5deg); filter: brightness(1.02); }
+  100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+}
+
+@keyframes inkBloom {
+  0% { transform: scale(0); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* 🎨 Classes utilitárias extras para o estilo cartoon */
+
+@layer utilities {
+  .hand-drawn {
+    /* Simula traço irregular de lápis */
+    position: relative;
+  }
+  
+  .hand-drawn::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid hsl(var(--border) / 0.4);
+    border-radius: 60% 40% 55% 45% / 55% 45% 60% 40%;
+    pointer-events: none;
+    animation: wobble 4s ease-in-out infinite;
+  }
+
+  .paper-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .paper-ripple::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--background) / 0.3), transparent);
+    transform: skewX(-20deg);
+    animation: paperShine 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes paperShine {
+    0% { left: -100%; }
+    20%, 100% { left: 150%; }
+  }
+
+  .doodle-corner {
+    position: relative;
+  }
+
+  .doodle-corner::before,
+  .doodle-corner::after {
+    content: "✎";
+    position: absolute;
+    font-size: 0.7rem;
+    color: hsl(var(--primary) / 0.6);
+    animation: twinkle 2.5s ease-in-out infinite;
+  }
+
+  .doodle-corner::before {
+    top: -6px;
+    left: -6px;
+    animation-delay: 0s;
+  }
+
+  .doodle-corner::after {
+    bottom: -6px;
+    right: -6px;
+    animation-delay: 1.2s;
+    transform: rotate(180deg);
+  }
+
+  .marker-highlight {
+    @apply relative px-1 py-0.5 rounded;
+    background: linear-gradient(180deg, 
+      hsl(50, 100%, 75%) 0%, 
+      hsl(45, 100%, 70%) 100%);
+    box-shadow: 
+      2px 2px 0 0 hsl(var(--border) / 0.35),
+      4px 4px 0 0 hsl(var(--foreground) / 0.08);
+  }
+
+  .sketch-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .sketch-underline::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: repeating-linear-gradient(
+      to right,
+      hsl(var(--primary)) 0,
+      hsl(var(--primary)) 8px,
+      transparent 8px,
+      transparent 12px
+    );
+    border-radius: 2px;
+    animation: sketchDraw 1.5s ease-out forwards;
+  }
+}
+
+/* 🎭 Efeitos de interação divertidos */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hover\:lift:hover {
+    animation: bounceSoft 0.6s ease;
+  }
+
+  .hover\:crumple:hover {
+    animation: paperCrumple 0.4s ease;
+  }
+
+  .click\:ink:active {
+    position: relative;
+  }
+
+  .click\:ink:active::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 70%);
+    animation: inkBloom 0.6s ease-out forwards;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}
+
+/* 📱 Ajustes para telas menores */
+
+@media (max-width: 640px) {
+  :root {
+    --radius: 0.875rem;
+  }
+  
+  h1 { @apply text-3xl; }
+  h2 { @apply text-2xl; }
+  h3 { @apply text-xl; }
+}
+
+/* 🖨️ Modo de impressão amigável */
+
+@media print {
+  :root {
+    --paper-noise: none;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+  
+  .glass-card, .gradient-bg {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    background: white !important;
+  }
+  
+  .gradient-text {
+    color: black !important;
+    text-shadow: none !important;
+  }
 }

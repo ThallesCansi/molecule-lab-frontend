@@ -10,7 +10,7 @@ export default function LandingScreen() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden gradient-bg-subtle">
-      <ParticlesBackground />
+      {/* <ParticlesBackground /> */}
 
       {/* Decorative orbs */}
       <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-primary/10 blur-3xl animate-float" />
@@ -28,7 +28,7 @@ export default function LandingScreen() {
           className="font-display text-4xl sm:text-5xl md:text-7xl font-bold leading-tight animate-fade-in"
           style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
         >
-          Sobrevive ao calor?{' '}
+          Sobrevive ao calor?{' '} <br/>
           <span className="gradient-text">Desafie sua molécula</span>
         </h1>
 

@@ -62,7 +62,7 @@ export default function BuilderScreen() {
         <Button variant="ghost" size="sm" onClick={() => setScreen('landing')}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
         </Button>
-        <h2 className="font-display text-lg font-semibold gradient-text">Construa sua molécula</h2>
+        <h2 className="font-display text-2xl font-semibold gradient-text">Construa sua molécula</h2>
         <Button variant="hero" size="sm" onClick={handleTest} disabled={builder.atoms.length < 2}>
           <Flame className="w-4 h-4 mr-1" /> Testar
         </Button>
