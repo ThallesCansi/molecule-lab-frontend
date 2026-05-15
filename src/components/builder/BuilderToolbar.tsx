@@ -10,6 +10,7 @@ import {
   EyeOff,
   Eye,
   Plus,
+  Download,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -29,6 +30,7 @@ interface BuilderToolbarProps {
   hasAtoms: boolean;
   bondOrder: number;
   setBondOrder: (n: number) => void;
+  onExport: () => void;
 }
 
 const ToolBtn = ({
@@ -66,7 +68,7 @@ const ToolBtn = ({
 
 export default function BuilderToolbar({
   tool, setTool, canUndo, canRedo, onUndo, onRedo, onClear, onComplete,
-  showHydrogens, onToggleH, hasAtoms, bondOrder, setBondOrder,
+  showHydrogens, onToggleH, hasAtoms, bondOrder, setBondOrder, onExport,
 }: BuilderToolbarProps) {
   return (
     <div className="flex flex-col gap-1.5 p-2 glass-card rounded-2xl">
@@ -107,6 +109,15 @@ export default function BuilderToolbar({
         onClick={onToggleH}
       />
       <ToolBtn icon={Atom} label="Completar H" onClick={onComplete} disabled={!hasAtoms} />
+
+      <div className="border-t border-border/30 my-1" />
+
+      <ToolBtn
+        icon={Download}
+        label="Exportar grafo (.json)"
+        onClick={onExport}
+        disabled={!hasAtoms}
+      />
 
       <div className="border-t border-border/30 my-1" />
 
