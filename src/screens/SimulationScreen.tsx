@@ -53,8 +53,14 @@ interface Particle {
 }
 
 export default function SimulationScreen() {
-  const { molecule, admin, setSimulationResult, setScreen, simulationResult } =
-    useExperience();
+  const {
+    molecule,
+    admin,
+    setSimulationResult,
+    setScreen,
+    simulationResult,
+    moleculeAnalysis,
+  } = useExperience();
   const [phase, setPhase] = useState<"heating" | "result">("heating");
   const [progress, setProgress] = useState(0);
   const [temperature, setTemperature] = useState(25);
@@ -84,17 +90,38 @@ export default function SimulationScreen() {
   const durations = { short: 4000, medium: 7000, long: 10000 };
   const totalDuration = durations[admin.animationDuration];
 
-  // Determine result
+  /**
+   * Determine result — ordem de prioridade:
+   *  1. Admin forçou resultado → usa o forçado
+   *  2. Backend retornou análise válida → usa moleculeAnalysis.result
+   *  3. Fallback heurístico local (ratio ligações/átomos)
+   */
   useEffect(() => {
     let result: "stable" | "break";
-    if (admin.forceResult === "stable") result = "stable";
-    else if (admin.forceResult === "break") result = "break";
-    else {
+    if (admin.forceResult === "stable") {
+      result = "stable";
+    } else if (admin.forceResult === "break") {
+      result = "break";
+    } else if (moleculeAnalysis?.result) {
+      // Resultado determinado pelo RDKit no backend
+      result = moleculeAnalysis.result;
+    } else {
+      // Fallback local: heurística simples de conectividade
       const ratio = molecule.bonds.length / Math.max(molecule.atoms.length, 1);
       result = ratio >= 0.8 ? "stable" : "break";
     }
     setSimulationResult(result);
-  }, [molecule, admin.forceResult, setSimulationResult]);
+  }, [molecule, admin.forceResult, moleculeAnalysis, setSimulationResult]);
+
+  // Progresso normalizado onde a quebra ocorre (0–1).
+  // Usa break_temperature do backend (escala 0–10 000 K) para parar a animação
+  // exatamente no momento da quebra simulada, em vez de sempre ir até o fim.
+  const breakProgressTarget =
+    moleculeAnalysis?.break_temperature != null
+      ? Math.max(0.05, moleculeAnalysis.break_temperature / 10_000)
+      : 1;
+
+  const effectiveDuration = totalDuration * breakProgressTarget;
 
   // Main animation loop
   useEffect(() => {
@@ -104,9 +131,11 @@ export default function SimulationScreen() {
     const tick = () => {
       if (!running) return;
       const elapsed = Date.now() - start;
-      const p = Math.min(elapsed / totalDuration, 1);
+      const p = Math.min(elapsed / effectiveDuration, 1);
       setProgress(p);
-      setTemperature(25 + p * 975);
+      // Temperatura em K: mapeia 0→1 K e 1→break_temperature (ou 10 000 K)
+      const maxT = moleculeAnalysis?.break_temperature ?? 10_000;
+      setTemperature(Math.round(1 + p * (maxT - 1)));
       setBondPulse(Math.sin(elapsed * 0.008) * 0.5 + 0.5);
 
       // Vibration offsets with easing
@@ -205,7 +234,15 @@ export default function SimulationScreen() {
       running = false;
       cancelAnimationFrame(animFrameRef.current);
     };
-  }, [totalDuration, admin.simulationIntensity, fittedAtoms, simulationResult]);
+  }, [
+    totalDuration,
+    effectiveDuration,
+    breakProgressTarget,
+    admin.simulationIntensity,
+    fittedAtoms,
+    simulationResult,
+    moleculeAnalysis,
+  ]);
 
   // Continue updating particles in result phase
   useEffect(() => {
@@ -274,7 +311,7 @@ export default function SimulationScreen() {
             className="font-display text-5xl md:text-7xl font-bold transition-colors duration-300"
             style={{ color: tempColor }}
           >
-            {Math.round(temperature)}°C
+            {temperature.toLocaleString("pt-BR")} K
           </p>
         </div>
 
@@ -480,6 +517,91 @@ export default function SimulationScreen() {
                 ? "Mais energia, mais vibração — maior chance de ruptura!"
                 : "As ligações dessa molécula suportaram o aumento de energia térmica."}
             </p>
+
+            {/* Dados do backend / RDKit */}
+            {moleculeAnalysis && moleculeAnalysis.valid && (
+              <div className="glass-card rounded-2xl px-6 py-4 text-sm text-left space-y-2 min-w-[260px] max-w-sm w-full">
+                {/* Identidade da molécula */}
+                {moleculeAnalysis.name && (
+                  <p className="font-semibold text-foreground text-base">
+                    {moleculeAnalysis.name}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  {moleculeAnalysis.formula && (
+                    <p className="text-muted-foreground">
+                      <span className="text-foreground font-medium">
+                        Fórmula:
+                      </span>{" "}
+                      {moleculeAnalysis.formula}
+                    </p>
+                  )}
+                  {moleculeAnalysis.molecular_weight > 0 && (
+                    <p className="text-muted-foreground">
+                      <span className="text-foreground font-medium">
+                        Massa:
+                      </span>{" "}
+                      {moleculeAnalysis.molecular_weight.toFixed(2)} g/mol
+                    </p>
+                  )}
+                </div>
+
+                {/* Temperatura de quebra — destaque visual */}
+                {isBreak && moleculeAnalysis.break_temperature != null && (
+                  <div className="border-t border-border/40 pt-2 mt-1">
+                    <p className="text-muted-foreground">
+                      <span className="text-foreground font-medium">
+                        Temperatura de quebra:
+                      </span>{" "}
+                      <span className="text-destructive font-bold">
+                        {Math.round(
+                          moleculeAnalysis.break_temperature
+                        ).toLocaleString("pt-BR")}{" "}
+                        K
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {/* Ligações que romperam */}
+                {isBreak && moleculeAnalysis.broken_bonds.length > 0 && (
+                  <div className="border-t border-border/40 pt-2 space-y-1">
+                    <p className="text-foreground font-medium text-xs uppercase tracking-wide">
+                      Ligações rompidas
+                    </p>
+                    {moleculeAnalysis.broken_bonds.map((b, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-4 text-xs"
+                      >
+                        <span className="font-mono text-foreground">
+                          {b.atom_i}–{b.atom_j}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {b.distance.toFixed(2)} Å
+                          <span className="ml-2 text-destructive">
+                            ({Math.round(b.fraction * 100)}% dissociada)
+                          </span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* SMILES */}
+                {moleculeAnalysis.smiles && (
+                  <div className="border-t border-border/40 pt-2">
+                    <p className="text-muted-foreground font-mono text-xs break-all leading-relaxed">
+                      <span className="text-foreground font-medium not-mono text-xs uppercase tracking-wide">
+                        SMILES:{" "}
+                      </span>
+                      {moleculeAnalysis.smiles}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-4 flex-wrap justify-center">
               <Button
                 variant="outline"

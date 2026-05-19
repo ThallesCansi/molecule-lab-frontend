@@ -8,16 +8,22 @@ import BuilderCanvas from "@/components/builder/BuilderCanvas";
 import BuilderToolbar from "@/components/builder/BuilderToolbar";
 import AtomPalette from "@/components/builder/AtomPalette";
 import PresetsPanel from "@/components/builder/PresetsPanel";
-import { ArrowLeft, Flame } from "lucide-react";
+import { ArrowLeft, Flame, Loader2 } from "lucide-react";
+import { analyzeMolecule } from "@/lib/moleculeApi";
 
 type Tool = "select" | "add" | "move" | "delete" | "pan";
 type Tab = "free" | "presets";
 
 export default function BuilderScreen() {
-  const { setScreen, setMolecule } = useExperience();
+  const { setScreen, setMolecule, setMoleculeAnalysis, admin } =
+    useExperience();
   const builder = useMoleculeBuilder();
   const [tool, setTool] = useState<Tool>("add");
   const [tab, setTab] = useState<Tab>("free");
+
+  // Estado da chamada de API
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -55,13 +61,76 @@ export default function BuilderScreen() {
     };
   }, [builder]);
 
-  const handleTest = () => {
+  /**
+   * Ao clicar em "Testar":
+   *  1. Serializa a molécula em grafo e envia ao backend
+   *  2. Se o admin forçou resultado, ignora a resposta e usa o forçado
+   *  3. Armazena análise no contexto e navega para simulação
+   *  4. Se a chamada falhar, exibe o erro e ainda permite navegar (fallback local)
+   */
+  const handleTest = useCallback(async () => {
+    setApiError(null);
+    setIsSubmitting(true);
+
+    // Persiste a molécula no contexto independente de sucesso/falha da API
     setMolecule({
       atoms: builder.atoms,
       bonds: builder.bonds.map((b) => ({ id: b.id, from: b.from, to: b.to })),
     });
-    setScreen("simulation");
-  };
+
+    try {
+      const analysis = await analyzeMolecule(builder.atoms, builder.bonds);
+
+      // Se o admin forçou um resultado, sobrescreve o do backend
+      if (admin.forceResult !== "auto") {
+        analysis.result = admin.forceResult;
+      }
+
+      setMoleculeAnalysis(analysis);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      console.error("[moleculeApi] analyzeMolecule falhou:", msg);
+      setApiError(msg);
+      // Continua para simulação mesmo sem análise (fallback heurístico local)
+      setMoleculeAnalysis(null);
+    } finally {
+      setIsSubmitting(false);
+      setScreen("simulation");
+    }
+  }, [
+    builder.atoms,
+    builder.bonds,
+    admin.forceResult,
+    setMolecule,
+    setMoleculeAnalysis,
+    setScreen,
+  ]);
+
+  const handleExport = useCallback(() => {
+    const graph = {
+      atoms: builder.atoms.map((a) => ({
+        id: a.id,
+        symbol: a.symbol,
+        x: a.x,
+        y: a.y,
+      })),
+      bonds: builder.bonds.map((b) => ({
+        id: b.id,
+        from: b.from,
+        to: b.to,
+        order: b.order,
+      })),
+    };
+
+    const json = JSON.stringify({ graph }, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `molecule_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [builder.atoms, builder.bonds]);
 
   const handleSelectAtom = useCallback(
     (symbol: string) => {
@@ -77,16 +146,21 @@ export default function BuilderScreen() {
         <Button variant="ghost" size="sm" onClick={() => setScreen("landing")}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
         </Button>
-        <h2 className="font-display text-2xl font-semibold gradient-text">
+        <h2 className="font-display text-lg font-semibold gradient-text">
           Construa sua molécula
         </h2>
         <Button
           variant="hero"
           size="sm"
           onClick={handleTest}
-          disabled={builder.atoms.length < 2}
+          disabled={builder.atoms.length < 2 || isSubmitting}
         >
-          <Flame className="w-4 h-4 mr-1" /> Testar
+          {isSubmitting ? (
+            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+          ) : (
+            <Flame className="w-4 h-4 mr-1" />
+          )}
+          {isSubmitting ? "Analisando…" : "Testar"}
         </Button>
       </header>
 
@@ -150,6 +224,16 @@ export default function BuilderScreen() {
               onComplete={builder.completeWithHydrogens}
               showHydrogens={builder.showHydrogens}
               onToggleH={() => builder.setShowHydrogens(!builder.showHydrogens)}
+              tool={tool}
+              setTool={setTool}
+              canUndo={builder.canUndo}
+              canRedo={builder.canRedo}
+              onUndo={builder.undo}
+              onRedo={builder.redo}
+              onClear={builder.clearAll}
+              onComplete={builder.completeWithHydrogens}
+              showHydrogens={builder.showHydrogens}
+              onToggleH={() => builder.setShowHydrogens(!builder.showHydrogens)}
               hasAtoms={builder.atoms.length > 0}
               bondOrder={builder.bondOrder}
               setBondOrder={builder.setBondOrder}
@@ -177,6 +261,14 @@ export default function BuilderScreen() {
             />
           </div>
 
+          {/* Erro de API */}
+          {apiError && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 glass-card glow-border px-5 py-3 rounded-full text-sm text-destructive animate-scale-in z-20 max-w-sm text-center">
+              ⚠️ Backend indisponível — simulação local ativada
+            </div>
+          )}
+
+          {/* Erro de valência */}
           {builder.valenceError && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card glow-border px-5 py-3 rounded-full text-sm text-accent animate-scale-in z-20">
               ⚠️ {builder.valenceError}

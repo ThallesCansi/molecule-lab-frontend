@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { MoleculeAnalysis } from '@/lib/moleculeApi';
 
 export interface Atom {
   id: string;
@@ -41,6 +42,12 @@ interface ExperienceState {
   admin: AdminSettings;
   setAdmin: (a: AdminSettings) => void;
   resetExperience: () => void;
+  /**
+   * Resultado da análise retornado pelo backend / RDKit.
+   * É null enquanto a análise não foi concluída ou se a chamada falhou.
+   */
+  moleculeAnalysis: MoleculeAnalysis | null;
+  setMoleculeAnalysis: (a: MoleculeAnalysis | null) => void;
 }
 
 const defaultAdmin: AdminSettings = {
@@ -61,19 +68,31 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
   const [molecule, setMolecule] = useState<MoleculeData>(defaultMolecule);
   const [simulationResult, setSimulationResult] = useState<'stable' | 'break' | null>(null);
   const [admin, setAdmin] = useState<AdminSettings>(defaultAdmin);
+  const [moleculeAnalysis, setMoleculeAnalysis] = useState<MoleculeAnalysis | null>(null);
 
   const resetExperience = () => {
     setScreen('landing');
     setMolecule(defaultMolecule);
     setSimulationResult(null);
+    setMoleculeAnalysis(null);
   };
 
   return (
-    <ExperienceContext.Provider value={{
-      screen, setScreen, molecule, setMolecule,
-      simulationResult, setSimulationResult,
-      admin, setAdmin, resetExperience,
-    }}>
+    <ExperienceContext.Provider
+      value={{
+        screen,
+        setScreen,
+        molecule,
+        setMolecule,
+        simulationResult,
+        setSimulationResult,
+        admin,
+        setAdmin,
+        resetExperience,
+        moleculeAnalysis,
+        setMoleculeAnalysis,
+      }}
+    >
       {children}
     </ExperienceContext.Provider>
   );
