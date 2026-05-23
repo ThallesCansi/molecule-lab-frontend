@@ -48,7 +48,7 @@ export default function AtomPalette({ selectedAtomType, onSelect }: AtomPaletteP
                   }`}
                 >
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border border-border/30 shrink-0"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-foreground shrink-0"
                     style={{ backgroundColor: ATOM_COLORS[a.symbol], textShadow: '0 1px 2px rgba(0,0,0,0.5)', color: '#fff' }}
                   >
                     {a.symbol}

@@ -63,7 +63,17 @@ cd laboratorio-molecular
 npm install
 # ou
 bun install
+```
 
+Crie um arquivo `.env.local` na raiz do projeto apontando para o backend:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+Depois inicie o servidor de desenvolvimento:
+
+```bash
 # Inicie o servidor de desenvolvimento
 npm run dev
 # ou
