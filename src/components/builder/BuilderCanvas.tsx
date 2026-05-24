@@ -408,7 +408,7 @@ export default function BuilderCanvas({
     const opacity = isImplicit ? 0.25 : 0.8;
     const strokeColor = isImplicit
       ? "hsl(var(--muted-foreground))"
-      : "hsl(var(--foreground) / 0.5)";
+      : "hsla(var(--foreground), 0.5)";
 
     if (bond.order === 1) {
       return (
@@ -589,7 +589,7 @@ export default function BuilderCanvas({
               cx={20 * zoom}
               cy={20 * zoom}
               r={0.7 * zoom}
-              fill="hsl(var(--muted-foreground) / 0.2)"
+              fill="hsla(var(--muted-foreground), 0.2)"
             />
           </pattern>
         </defs>
@@ -711,7 +711,7 @@ export default function BuilderCanvas({
                 y="230"
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill="hsl(var(--muted-foreground) / 0.6)"
+                fill="hsla(var(--muted-foreground), 0.6)"
                 fontSize="13"
               >
                 Selecione um átomo e vá clicando para expandir
