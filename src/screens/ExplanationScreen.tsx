@@ -87,8 +87,9 @@ export default function ExplanationScreen() {
 
         {/* Future integration placeholder */}
         <div className="glass-card p-6 w-full text-center animate-fade-in" style={{ animationDelay: '0.7s', animationFillMode: 'backwards' }}>
+          <img src="/quebra_molecular_2026.png" alt="QR Code" className="w-80 justify-self-center" />
           <p className="text-muted-foreground text-sm">
-            📱 Em breve: escaneie um QR code para levar este conteúdo com você!
+            📱 escaneie um QR code para levar este conteúdo com você!
           </p>
         </div>
 
