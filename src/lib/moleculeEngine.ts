@@ -3,7 +3,7 @@ import { ATOM_COLORS } from '@/data/presetMolecules';
 
 // --- Valence rules ---
 export const VALENCE: Record<string, number> = {
-  H: 1, C: 4, O: 2, N: 3, S: 2, P: 3, F: 1, Cl: 1, Br: 1,
+  H: 1, C: 4, O: 2, N: 5, S: 2, P: 3, F: 1, Cl: 1, Br: 1,
 };
 
 let _idCounter = Date.now();

@@ -83,6 +83,8 @@ export default function BuilderScreen() {
       })),
     });
 
+    console.log(builder.atoms, builder.bonds);
+
     try {
       const analysis = await createMoleculeSimulation(
         builder.atoms,

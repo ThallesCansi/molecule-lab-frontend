@@ -390,4 +390,145 @@ export const presetMolecules: PresetMolecule[] = [
       bond('b1', 'cl1', 'h1'),
     ],
   },
+  {
+    name: 'Nitroglicerina (C₃H₅N₃O₉)',
+    description: 'Explosivo potente, tri-éster do ácido nítrico com glicerol',
+    formula: 'C3H5N3O9',
+    stability: 0.35,
+    atoms: [
+      // Oxigênio ligado ao N1
+      atom('o1', 'O', 363, 427),
+      // Nitrogênio central 1 com ligação dupla O
+      atom('n1', 'N', 403, 358),
+      // Oxigênio dupla ligado ao N1
+      atom('o2', 'O', 483, 358),
+      // Oxigênio simples ligado ao N1 (ponte para C1)
+      atom('o3', 'O', 363, 289),
+      // Carbono 1 (CH)
+      atom('c1', 'C', 403, 220),
+      // Carbono 2 (CH2)
+      atom('c2', 'C', 363, 151),
+      // Oxigênio ponte C2-N2
+      atom('o4', 'O', 283, 151),
+      // Nitrogênio 2
+      atom('n2', 'N', 243, 82),
+      // Oxigênio dupla N2
+      atom('o5', 'O', 163, 82),
+      // Carbono 3 (CH2)
+      atom('c3', 'C', 403, 82),
+      // Oxigênio ponte C3-N3
+      atom('o6', 'O', 363, 13),
+      // Nitrogênio 3
+      atom('n3', 'N', 403, -56),
+      // Oxigênio dupla N3
+      atom('o7', 'O', 483, -56),
+      // Oxigênio dupla N3 (segundo O)
+      atom('o8', 'O', 363, -125),
+      // Oxigênio dupla N2 (segundo O)
+      atom('o9', 'O', 283, 13),
+    ],
+    bonds: [
+      // N1 com dois O dupla
+      bond('b1', 'o1', 'n1', 2),
+      bond('b2', 'n1', 'o2', 2),
+      // N1-O3 simples (ponte)
+      bond('b3', 'n1', 'o3', 1),
+      // O3-C1
+      bond('b4', 'o3', 'c1', 1),
+      // C1-C2
+      bond('b5', 'c1', 'c2', 1),
+      // C2-O4
+      bond('b6', 'c2', 'o4', 1),
+      // O4-N2
+      bond('b7', 'o4', 'n2', 1),
+      // N2 com dois O dupla
+      bond('b8', 'n2', 'o5', 2),
+      bond('b14', 'n2', 'o9', 2),
+      // C2-C3
+      bond('b9', 'c2', 'c3', 1),
+      // C3-O6
+      bond('b10', 'c3', 'o6', 1),
+      // O6-N3
+      bond('b11', 'o6', 'n3', 1),
+      // N3 com dois O dupla
+      bond('b12', 'n3', 'o7', 2),
+      bond('b13', 'n3', 'o8', 2),
+    ],
+  },
+  {
+    name: 'TNT (C₇H₅N₃O₆)',
+    description: 'Trinitrotolueno, explosivo estável com anel aromático',
+    formula: 'C7H5N3O6',
+    stability: 0.72,
+    atoms: [
+      // Anel benzênico - Carbonos
+      atom('c1', 'C', 300, 180),  // C com CH3 (posição 1)
+      atom('c2', 'C', 360, 210),  // C com NO2 (posição 2)
+      atom('c3', 'C', 360, 270),  // C com H (posição 3)
+      atom('c4', 'C', 300, 300),  // C com NO2 (posição 4)
+      atom('c5', 'C', 240, 270),  // C com H (posição 5)
+      atom('c6', 'C', 240, 210),  // C com NO2 (posição 6)
+      
+      // Grupo metil (CH3) no carbono 1
+      atom('c7', 'C', 300, 120),
+      
+      // Hidrogênios do grupo metil
+      h('h1a', { x: 300, y: 120 }, -60),
+      h('h1b', { x: 300, y: 120 }, 60),
+      h('h1c', { x: 300, y: 120 }, 180),
+      
+      // Hidrogênios do anel (posições 3 e 5)
+      h('h3', { x: 360, y: 270 }, 90),
+      h('h5', { x: 240, y: 270 }, -90),
+      
+      // Grupo NO2 no carbono 2
+      atom('n2', 'N', 420, 190),
+      atom('o2a', 'O', 460, 160),
+      atom('o2b', 'O', 460, 220),
+      
+      // Grupo NO2 no carbono 4
+      atom('n4', 'N', 300, 360),
+      atom('o4a', 'O', 340, 400),
+      atom('o4b', 'O', 260, 400),
+      
+      // Grupo NO2 no carbono 6
+      atom('n6', 'N', 180, 190),
+      atom('o6a', 'O', 140, 160),
+      atom('o6b', 'O', 140, 220),
+    ],
+    bonds: [
+      // Ligações do anel benzênico (alternando duplas)
+      bond('b1', 'c1', 'c2', 2),
+      bond('b2', 'c2', 'c3', 1),
+      bond('b3', 'c3', 'c4', 2),
+      bond('b4', 'c4', 'c5', 1),
+      bond('b5', 'c5', 'c6', 2),
+      bond('b6', 'c6', 'c1', 1),
+      
+      // Grupo metil
+      bond('b7', 'c1', 'c7', 1),
+      bond('b8', 'c7', 'h1a', 1),
+      bond('b9', 'c7', 'h1b', 1),
+      bond('b10', 'c7', 'h1c', 1),
+      
+      // Hidrogênios do anel
+      bond('b11', 'c3', 'h3', 1),
+      bond('b12', 'c5', 'h5', 1),
+      
+      // NO2 no carbono 2
+      bond('b13', 'c2', 'n2', 1),
+      bond('b14', 'n2', 'o2a', 2),
+      bond('b15', 'n2', 'o2b', 2),
+      
+      // NO2 no carbono 4
+      bond('b16', 'c4', 'n4', 1),
+      bond('b17', 'n4', 'o4a', 2),
+      bond('b18', 'n4', 'o4b', 2),
+      
+      // NO2 no carbono 6
+      bond('b19', 'c6', 'n6', 1),
+      bond('b20', 'n6', 'o6a', 2),
+      bond('b21', 'n6', 'o6b', 2),
+    ],
+  }
 ];
